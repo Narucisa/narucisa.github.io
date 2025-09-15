@@ -1,0 +1,98 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="Keywords" content="thereal_pika, pikapower9080">
+    <meta name="author" content="pikapower9080">
+    <title id="title">Annoyr</title>
+   <script async src="https://www.googletagmanager.com/gtag/js?id=G-QDVLYLPGDW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-QDVLYLPGDW');
+    </script>
+    <style>
+        @import url("animations.css");
+        :root{
+            --background-color: red;
+            --text-color-main: white;
+            --main-font: 'Comic Sans MS', serif;
+        }
+        body{
+            background-color: var(--background-color);
+            color: var(--text-color-main);
+            font-family: var(--main-font);
+        }
+      body {
+  background-color: rgb(252, 252, 252);
+  font-family: sans-serif;
+  color: rgb(0, 0, 0);
+}
+details{
+  border-radius: 5px;
+  border-style: solid;
+  border-color: lightgray;
+  border-width: 1px;
+  padding-left: 5px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  background-color: rgb(240, 239, 240);
+}
+a:visited{
+  color: rgb(9, 33, 234);
+}
+ul{
+  list-style: none;
+}
+    </style>
+  </head>
+  <body>
+    <h1 id="clickmessage">Click the troll face to begin</h1>
+    <img src="trololol.png" id="trollface" onclick="start()"><br>
+    <script src="popups.js"></script>
+    <script>
+        console.log(popups)
+        function fillhistory(){
+            for (let index = 0; index <= 80; index++) {
+                window.history.pushState({}, '', window.location.pathname + '?q=' + "Hello " + new Date().getMilliseconds())
+            }
+            window.history.pushState({}, '', window.location.pathname)
+        }
+        function haltprompt(promptMessage, totype){
+            var response = prompt(promptMessage)
+            if (response == totype) {
+                
+            } else {
+                alert("NO!")
+                haltprompt(promptMessage, totype)
+            }
+        }
+        function say(text){
+            window.speechSynthesis.speak(new window.SpeechSynthesisUtterance(text))
+        }
+        function start(){
+            try{say("get annoyed lil bro tinyurl dot com slash gee gee tee files ")} catch{}
+            var trollface = document.getElementById("trollface")
+            var pagetitle = document.getElementById("title")
+            pagetitle.innerHTML = "Annoyr [ENGAGED]"
+            trollface.classList.add("rotateanim")
+            trollface.removeAttribute("onclick")
+            const anthem = new Audio("https://slimetube.github.io/feelgoodinc.mp3")
+            anthem.volume = 0.1
+            anthem.play() 
+            fillhistory()
+            download("https://slimetube.github.io/src/seizures.jpeg")
+            window.addEventListener('beforeunload', event => {
+                event.returnValue = true
+            })
+           
+           
+        }
+    </script>
+</body>
+</html>
