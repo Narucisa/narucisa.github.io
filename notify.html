@@ -3,44 +3,44 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Quagmire Troller</title>
-<style>
-html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial}
-.container{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px}
-.badge{padding:10px 14px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.12)}
-.info{color:#111;background:#f3f4f6}
-.warn{color:#fff;background:#ef4444}
-.small{font-size:13px;opacity:.9}
-</style>
+<title>Quagmire Updater</title>
+<link rel="manifest" href="manifest.json">
 </head>
 <body>
-<div class="container">
-  <div id="status" class="badge info">Waiting 5 seconds to ask for notification permission…</div>
-  <div class="small">If the browser blocks permission prompts, allow notifications from this page manually.</div>
-</div>
+<h2>Enable notifications for Quagmire Update</h2>
+<button id="installBtn" hidden>Install App</button>
+
 <script>
-const DELAY_MS = 5000;
-const INTERVAL_MS = 5000;
-const IMAGE_URL = "https://i.ytimg.com/vi/9_6SkzdB1kQ/hqdefault.jpg";
-const statusEl = document.getElementById('status');
-function showNotification(){ 
-  if(Notification.permission !== 'granted') return; 
-  new Notification('Windows needs a quagmire update',{ icon: IMAGE_URL }); 
+async function registerWorker() {
+  if (!("serviceWorker" in navigator)) return alert("Service workers not supported.");
+  const reg = await navigator.serviceWorker.register("sw.js");
+  setTimeout(async () => {
+    const perm = await Notification.requestPermission();
+    if (perm === "granted") {
+      reg.active.postMessage("start");
+    } else {
+      alert("Notifications not granted.");
+    }
+  }, 5000);
 }
-function startNotifications(){ 
-  showNotification(); 
-  setInterval(showNotification, INTERVAL_MS); 
-  statusEl.textContent = 'Notifications enabled — sending now and every 5 seconds.'; 
-  statusEl.className = 'badge warn'; 
-}
-setTimeout(()=>{
-  if(!('Notification' in window)){ statusEl.textContent = 'This browser does not support Notifications.'; return; }
-  if(Notification.permission === 'granted'){ startNotifications(); return; }
-  if(Notification.permission === 'denied'){ statusEl.textContent = 'Notifications were denied. Enable them in your browser settings.'; return; }
-  Notification.requestPermission().then(p=>{
-    if(p === 'granted'){ startNotifications(); } else { statusEl.textContent = 'Notification permission was not granted.'; }
-  }).catch(()=>{ statusEl.textContent = 'Permission request failed.'; });
-}, DELAY_MS);
+registerWorker();
+
+// Handle install prompt
+let deferredPrompt;
+const installBtn = document.getElementById("installBtn");
+
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  installBtn.hidden = false;
+});
+
+installBtn.addEventListener("click", async () => {
+  installBtn.hidden = true;
+  deferredPrompt.prompt();
+  await deferredPrompt.userChoice;
+  deferredPrompt = null;
+});
 </script>
 </body>
 </html>
