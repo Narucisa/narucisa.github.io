@@ -1,3 +1,4 @@
 [
-  { "ip": "74.119.150.1", "reason": "testing ip" }
+  { "ip": "74.119.150.1", "reason": "testing ip" },
+  { "ip": "104.28.214.49", "reason": "abusive CollabVM IP that might try to call people slurs (ip is from WizeVM)" }
 ]
