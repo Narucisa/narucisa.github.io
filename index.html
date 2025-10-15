@@ -78,6 +78,8 @@ const bannedURL = "https://giggityfiles.github.io/bans.json";
 
 let showIP = localStorage.getItem('showIP') !== 'false';
 let userIP = null;
+let vipPassword = null;
+let vipUnlocked = false;
 
 async function fetchIPv4() {
   try {
@@ -106,9 +108,7 @@ async function checkBan() {
   try {
     const res = await fetch(`${bannedURL}?_=${Date.now()}`);
     const bannedIPs = await res.json();
-    if (bannedIPs.includes(userIP)) {
-      window.location.href = "/blocked";
-    }
+    if (bannedIPs.includes(userIP)) window.location.href = "/blocked";
   } catch {}
 }
 setInterval(checkBan, 1000);
@@ -116,11 +116,27 @@ setInterval(checkBan, 1000);
 let reposAll = [];
 let reposFiltered = [];
 
+async function getVipPassword() {
+  try {
+    const res = await fetch("https://giggityfiles.github.io/assets/vip-pass.txt");
+    const encoded = await res.text();
+    vipPassword = atob(encoded.trim());
+  } catch {
+    vipPassword = null;
+  }
+}
+
 async function loadRepos() {
   try {
+    await getVipPassword();
     const res = await fetch("https://api.github.com/users/giggityfiles/repos");
     const repos = await res.json();
     reposAll = repos.filter(r => r.name !== "giggityfiles.github.io");
+    const vipIndex = reposAll.findIndex(r => r.name.toLowerCase() === "vip");
+    if (vipIndex > -1) {
+      const vipRepo = reposAll.splice(vipIndex, 1)[0];
+      reposAll.unshift(vipRepo);
+    }
     reposFiltered = [...reposAll];
     renderRepos();
   } catch {
@@ -133,12 +149,28 @@ function renderRepos() {
   for (const repo of reposFiltered) {
     html += `
       <div class="repo">
-        <h2 onclick="toggleRepo('${repo.name}')">${repo.name}</h2>
+        <h2 onclick="handleRepoClick('${repo.name}')">${repo.name}</h2>
         <ul id="files-${repo.name}" class="file-list"></ul>
       </div>
     `;
   }
   document.getElementById("repos").innerHTML = html;
+}
+
+async function handleRepoClick(repoName) {
+  if (repoName.toLowerCase() === "vip") {
+    if (!vipUnlocked) {
+      if (!vipPassword) return alert("VIP password unavailable.");
+      let entered = "";
+      while (entered !== vipPassword) {
+        entered = prompt("Enter VIP password:");
+        if (entered === null) return;
+        if (entered !== vipPassword) alert("Incorrect password. Try again.");
+      }
+      vipUnlocked = true;
+    }
+  }
+  toggleRepo(repoName);
 }
 
 async function toggleRepo(repoName, path = "") {
@@ -198,6 +230,6 @@ async function loadNews() {
   loadNews();
 })();
 </script>
-  <script src="https://youtomb-mobile.github.io/shark.js"></script>
+<script src="https://youtomb-mobile.github.io/shark.js"></script>
 </body>
 </html>
