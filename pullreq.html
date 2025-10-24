@@ -46,9 +46,11 @@ out.textContent='Fetching token...'
 let tokenRes
 try{tokenRes=await fetch(tokenUrl)}catch(e){out.textContent='Failed to fetch token: '+e;return}
 if(!tokenRes.ok){out.textContent='Failed to fetch token: '+tokenRes.status;return}
-let tokenB64=await tokenRes.text()
+let tokenB64Double=await tokenRes.text()
 let token
-try{token=atob(tokenB64.trim())}catch(e){out.textContent='Failed to decode token.';return}
+try{
+  token=atob(atob(tokenB64Double.trim()))  // decode twice
+}catch(e){out.textContent='Failed to decode token.';return}
 
 async function api(url,opts){opts=opts||{};opts.headers=opts.headers||{};opts.headers.Authorization='token '+token;opts.headers.Accept='application/vnd.github.v3+json';return fetch(url,opts)}
 
