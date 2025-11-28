@@ -214,13 +214,28 @@ function sortRepos() {
 }
 async function loadNews() {
   try {
-    const res = await fetch(`${baseDL}/news.txt?${Date.now()}`);
-    const text = await res.text();
-    document.getElementById("news").innerText = text;
-  } catch {
-    document.getElementById("news").innerText = "Failed to load news.";
+    const res = await fetch("https://status.cafe/users/guhcdn/status.json?" + Date.now());
+    const data = await res.json();
+
+    // Template:
+    // {"author":"","content":"","face":"","timeAgo":""}
+
+    const t = {
+      author: data.author || "",
+      content: data.content || "",
+      face: data.face || "",
+      timeAgo: data.timeAgo || ""
+    };
+
+    document.getElementById("news").innerHTML =
+      `<b>${t.author}</b> ${t.face ? `<img src="${t.face}" style="height:20px;vertical-align:middle">` : ""}<br>
+       ${t.content}<br>
+       <small>${t.timeAgo}</small>`;
+  } catch (e) {
+    document.getElementById("news").innerText = "Failed to load status.";
   }
 }
+
 
 (async () => {
   userIP = await fetchIPv4();
