@@ -228,7 +228,7 @@ async function loadNews() {
     };
 
     document.getElementById("news").innerHTML =
-      `<b>${t.author}</b> ${t.face ? `<img src="${t.face}" style="height:20px;vertical-align:middle">` : ""}<br>
+      `<b>${t.author}</b> ${t.face ? `<div>${t.face}</div>` : ""}<br>
        ${t.content}<br>
        <small>${t.timeAgo}</small>`;
   } catch (e) {
